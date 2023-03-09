@@ -1,8 +1,8 @@
 const { createCanvas } = require("canvas");
 const fs = require('fs');
-const webp = require('webp-converter');
+// const webp = require('webp-converter');
 
-webp.grant_permission();
+// webp.grant_permission();
 
 var Generator = function(ctx) {
   this.ctx = ctx;
@@ -39,18 +39,18 @@ Generator.prototype.createBuffer = function(width, height, t, callback, q) {
     quality = 100;
   }
 
-  // WebPの場合は別な処理を行う
-  if (t === 'webp') {
-    // 一旦PNG出力
-    canvas.toBuffer((err, buf) => {
-      // Q=64でWebP変換
-      var webpbuf = webp.buffer2webpbuffer(buf, 'png', '-q '+(quality ? quality : 70));
-      webpbuf.then(function (b) {
-        return callback(b);
-      });
-    }, 'image/png', {compressionLevel: 10});
-    return;
-  }
+  // // WebPの場合は別な処理を行う // NOTE - due to webp-converter not working with docker, don't know why😢
+  // if (t === 'webp') {
+  //   // 一旦PNG出力
+  //   canvas.toBuffer((err, buf) => {
+  //     // Q=64でWebP変換
+  //     var webpbuf = webp.buffer2webpbuffer(buf, 'png', '-q '+(quality ? quality : 70));
+  //     webpbuf.then(function (b) {
+  //       return callback(b);
+  //     });
+  //   }, 'image/png', {compressionLevel: 10});
+  //   return;
+  // }
 
   var encodeOption = {};
   if (t === 'jpeg') {
@@ -58,7 +58,8 @@ Generator.prototype.createBuffer = function(width, height, t, callback, q) {
       quality: quality ? quality/100 : 0.8
     };
   }
-  if (t === 'png') {
+  // if (t === 'png') {
+  else {
     encodeOption = {
       compressionLevel: quality ? Math.floor((quality/100)*10) : 10
     }

@@ -1,10 +1,12 @@
-FROM node:14-alpine
+FROM alpine AS builder
 
 RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
 
-COPY . .
+COPY package.json package-lock.json ./
+
+RUN apk add --no-cache --update nodejs npm
 
 RUN \
     apk add --no-cache \
@@ -27,11 +29,36 @@ RUN \
         librsvg-dev \
         pixman-dev \
         libwebp-dev \
-        python3=3.8.10-r0 \
-        make=4.2.1-r2  \
-        pkgconf=1.6.3-r0 && \
-    npm install && \
-    apk del build-deps
+        python3=3.10.10-r0 \
+        make=4.3-r1  \
+        pkgconf 
+
+RUN npm install --production
+
+FROM alpine
+
+RUN mkdir -p /opt/app
+
+WORKDIR /opt/app
+
+RUN apk update && apk upgrade
+
+RUN apk add --no-cache --update nodejs
+
+RUN \
+    apk add --no-cache \
+        cairo \
+        pango \
+        libjpeg-turbo \
+        libpng \
+        giflib \
+        librsvg \
+        pixman \
+        libwebp 
+
+COPY --from=builder /opt/app/node_modules ./node_modules
+
+COPY . .
 
 EXPOSE 8080
 
