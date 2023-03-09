@@ -23,10 +23,10 @@ const APP_VER = '2.0';
 let CLUSTER_ID = 1;
 let currentTasks = 0;
 
-// webp-converter対策
-if (!fs.existsSync('node_modules/webp-converter/temp')) {
-  fs.mkdirSync('node_modules/webp-converter/temp');
-}
+// // webp-converter対策
+// if (!fs.existsSync('node_modules/webp-converter/temp')) {
+//   fs.mkdirSync('node_modules/webp-converter/temp');
+// }
 
 /* globals Canvas */
 var _canvas = null;
